@@ -1,7 +1,7 @@
 package model
 
 import (
-	"github.com/lib/pq"
+	// "github.com/lib/pq"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 

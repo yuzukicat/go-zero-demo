@@ -25,6 +25,10 @@ func NewGetPostByIdLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetPo
 
 func (l *GetPostByIdLogic) GetPostById(in *post.GetPostByIdReq) (*post.GetPostByIdResp, error) {
 	// todo: add your logic here and delete this line
-
-	return &post.GetPostByIdResp{}, nil
+	return &post.GetPostByIdResp{
+		Post: &post.Post{
+			Id:    "1",
+			Title: "TestPost",
+		},
+	}, nil
 }

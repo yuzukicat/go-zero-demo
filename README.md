@@ -39,7 +39,7 @@ cd Workspace
 go install github.com/zeromicro/go-zero/tools/goctl@latest
 ```
 
-## [Install MariaDB](https://wiki.archlinux.org/title/MySQL)   
+## [Install MariaDB | Arch Linux](https://wiki.archlinux.org/title/MySQL)   
 https://wiki.archlinux.org/title/MariaDB   
 > Install [MariaDB](https://archlinux.org/packages/extra/x86_64/mariadb) and additional packages (mariadb-clients, mariadb-libs) in Arch Linux.   
 > Install mariadb, and run the following command before starting the mariadb.service:   
@@ -158,7 +158,7 @@ go mod tidy
 go run github.com/prisma/prisma-client-go generate.
 ```
 
-## Use go-zero to init an API-Gateway
+## Use go-zero to init an API-Gateway (Hello World Demo)   
 
 Install go-zero, protoc-gen-go.   
 
@@ -206,7 +206,9 @@ Access service.
 curl -i -X GET http://localhost:8888/from/you
 ```
 
-## [Generate Protobuf from mysql and write proto file](https://github.com/Mikaelemmmm/sql2pb)   
+## [Generate Protobuf from mysql and use generated prodoc to write proto file for rpc](https://github.com/Mikaelemmmm/sql2pb)   
+
+Go install `Mikaelemmmm/sql2pb`.   
 
 ```
 cd ../..
@@ -222,7 +224,7 @@ cd service
 sql2pb -go_package ./pb -host localhost -package pb -password password -port 3306 -schema mydb -service_name service -user yuzuki > service.proto
 ```
 
-Write proto file.   
+Directory Structure.   
 
 ```
 mkdir post
@@ -241,7 +243,188 @@ touch comment.proto
 cd ../..
 ```
 
-## [Generate Model from mysql, Generate Rpc using proto file](https://github.com/Mikaelemmmm/sql2pb)
+Edit`post.proto`.   
+
+```
+syntax = "proto3";
+
+option go_package ="./post";
+
+package post;
+
+// ------------------------------------ 
+// Messages
+// ------------------------------------ 
+
+
+//--------------------------------Post--------------------------------
+message Post {
+  string id = 1; //id
+  int64 createdAt = 2; //createdAt
+  int64 updatedAt = 3; //updatedAt
+  string title = 4; //title
+  int64 published = 5; //published
+  string desc = 6; //desc
+}
+
+message AddPostReq {
+  int64 createdAt = 1; //createdAt
+  int64 updatedAt = 2; //updatedAt
+  string title = 3; //title
+  int64 published = 4; //published
+  string desc = 5; //desc
+}
+
+message AddPostResp {
+}
+
+message UpdatePostReq {
+  string id = 1; //id
+  int64 createdAt = 2; //createdAt
+  int64 updatedAt = 3; //updatedAt
+  string title = 4; //title
+  int64 published = 5; //published
+  string desc = 6; //desc
+}
+
+message UpdatePostResp {
+}
+
+message DelPostReq {
+  int64 id = 1; //id
+}
+
+message DelPostResp {
+}
+
+message GetPostByIdReq {
+  int64 id = 1; //id
+}
+
+message GetPostByIdResp {
+  Post post = 1; //post
+}
+
+message SearchPostReq {
+  int64 page = 1; //page
+  int64 pageSize = 2; //pageSize
+  string id = 3; //id
+  int64 createdAt = 4; //createdAt
+  int64 updatedAt = 5; //updatedAt
+  string title = 6; //title
+  int64 published = 7; //published
+  string desc = 8; //desc
+}
+
+message SearchPostResp {
+  repeated Post post = 1; //post
+}
+
+
+
+// ------------------------------------ 
+// Rpc Func
+// ------------------------------------ 
+
+service service{ 
+
+	 //-----------------------Post----------------------- 
+	 rpc AddPost(AddPostReq) returns (AddPostResp); 
+	 rpc UpdatePost(UpdatePostReq) returns (UpdatePostResp); 
+	 rpc DelPost(DelPostReq) returns (DelPostResp); 
+	 rpc GetPostById(GetPostByIdReq) returns (GetPostByIdResp); 
+	 rpc SearchPost(SearchPostReq) returns (SearchPostResp); 
+
+}
+```
+
+Edit`comment.proto`.   
+
+```
+syntax = "proto3";
+
+option go_package ="./comment";
+
+package comment;
+
+// ------------------------------------ 
+// Messages
+// ------------------------------------ 
+
+//--------------------------------Comment--------------------------------
+message Comment {
+  string id = 1; //id
+  int64 createdAt = 2; //createdAt
+  string content = 3; //content
+  string postID = 4; //postID
+}
+
+message AddCommentReq {
+  int64 createdAt = 1; //createdAt
+  string content = 2; //content
+  string postID = 3; //postID
+}
+
+message AddCommentResp {
+}
+
+message UpdateCommentReq {
+  string id = 1; //id
+  int64 createdAt = 2; //createdAt
+  string content = 3; //content
+  string postID = 4; //postID
+}
+
+message UpdateCommentResp {
+}
+
+message DelCommentReq {
+  int64 id = 1; //id
+}
+
+message DelCommentResp {
+}
+
+message GetCommentByIdReq {
+  int64 id = 1; //id
+}
+
+message GetCommentByIdResp {
+  Comment comment = 1; //comment
+}
+
+message SearchCommentReq {
+  int64 page = 1; //page
+  int64 pageSize = 2; //pageSize
+  string id = 3; //id
+  int64 createdAt = 4; //createdAt
+  string content = 5; //content
+  string postID = 6; //postID
+}
+
+message SearchCommentResp {
+  repeated Comment comment = 1; //comment
+}
+
+
+
+// ------------------------------------ 
+// Rpc Func
+// ------------------------------------ 
+
+service service{ 
+
+	 //-----------------------Comment----------------------- 
+	 rpc AddComment(AddCommentReq) returns (AddCommentResp); 
+	 rpc UpdateComment(UpdateCommentReq) returns (UpdateCommentResp); 
+	 rpc DelComment(DelCommentReq) returns (DelCommentResp); 
+	 rpc GetCommentById(GetCommentByIdReq) returns (GetCommentByIdResp); 
+	 rpc SearchComment(SearchCommentReq) returns (SearchCommentResp); 
+
+}
+```
+
+## [Generate Model from mysql, Generate Rpc using Prodoc](https://github.com/Mikaelemmmm/sql2pb)   
 
 ```
 goctl model mysql datasource -url="yuzuki:password@tcp(localhost:3306)/mydb" -table="Post" -dir=./post/model --style=goZero
@@ -255,8 +438,207 @@ sed -i 's/,omitempty//g' ./post/rpc/types/post/post.pb.go
 sed -i 's/,omitempty//g' ./comment/rpc/types/comment/comment.pb.go
 cd ..
 go mod tidy
+cd service
 ```
 
-Edit client file to make the error disappear?
+## Business Coding (Coding rpc)   
 
-Edit configuration file.
+Add database configuration for rpc in yaml file.   
+
+```
+nano ./post/rpc/etc/post.yaml
+```
+
+Edit`post.yaml`.   
+
+```diff
+  Key: post.rpc
++ Mysql:
++   DataSource: $user:$password@tcp($url)/$db?charset=utf8mb4&parseTime=true&loc=Asia%2FTokyo
+```
+
+Add database struct for rpc config.   
+
+```
+nano ./post/rpc/internal/config/config.go
+```
+
+Edit`config.go`.   
+
+```diff
+package config
+
+import "github.com/zeromicro/go-zero/zrpc"
+
+type Config struct {
+	zrpc.RpcServerConf
++ 	Mysql struct {
++		DataSource string
++	}
+}
+```
+
+In model, comment unused datasource.   
+
+```
+nano ./post/model/postModel.go
+```
+
+Edit`postModel.go`.   
+
+```diff
+import (
+- 	"github.com/lib/pq"
++	// "github.com/lib/pq"
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
+)
+```
+
+Add resource dependency (srvice context or model) for rpc in svc:  
+
+```
+nano ./post/rpc/internal/svc/serviceContext.go
+```
+
+Edit`serviceContext.go`.   
+
+```diff
+package svc
+
+import (
+	"go-demo/service/post/model"
++	"go-demo/service/post/rpc/internal/config"
+
++	"github.com/zeromicro/go-zero/core/stores/sqlx"
+)
+
+type ServiceContext struct {
+	Config    config.Config
++	PostModel model.PostModel
+}
+
+func NewServiceContext(c config.Config) *ServiceContext {
++	conn := sqlx.NewMysql(c.Mysql.DataSource)
+	return &ServiceContext{
+		Config:    c,
++		PostModel: model.NewPostModel(conn),
+	}
+}
+```
+
+Write logic for rpc.   
+
+```
+nano ./post/rpc/internal/logic/getPostByIdLogic.go
+```
+
+Edit`getPostByIdLogic.go`.   
+
+```diff
+func (l *GetPostByIdLogic) GetPostById(in *post.GetPostByIdReq) (*post.GetPostByIdResp, error) {
+	// todo: add your logic here and delete this line
+-   return &post.GetPostByIdResp{}, nil
++	return &post.GetPostByIdResp{
++		Post: &post.Post{
++			Id:    "1",
++			Title: "TestPost",
++		},
++	}, nil
+}
+```
+
+## Coding APIs   
+
+Define APIs:   
+
+```
+touch ./post/api/postApi.api
+```
+
+Edit`postApi.api`.   
+
+```
+type (
+	GetPostByIdReq {
+		Id int64 `json:"id"`
+	}
+
+	GetPostByIdResp {
+		Post *Post `json:"post"`
+	}
+
+	Post {
+		Id        string `json:"id"`
+		CreatedAt int64  `json:"createdAt"`
+		UpdatedAt int64  `json:"updatedAt"`
+		Title     string `json:"title"`
+		Published int64  `json:"published"`
+		Desc      string `json:"desc"`
+	}
+)
+
+service user-api {
+	@handler post
+	get /api/post/get/:id (GetPostByIdReq) returns (GetPostByIdResp)
+}
+```
+
+Generate api services.   
+
+```
+goctl api go --api ./post/api/postApi.api -dir ./post/api --style=goZero
+```
+
+Add restapi configuration for api config.   
+
+```
+nano ./post/api/internal/config/config.go
+```
+
+Edit`config.go`.   
+
+```diff
+package config
+
+- import "github.com/zeromicro/go-zero/zrpc"
++ import (
++	"github.com/zeromicro/go-zero/rest"
++	"github.com/zeromicro/go-zero/zrpc"
++)
+
+type Config struct {
++	rest.RestConf
+-   zrpc.RpcServerConf
++	PostRpc zrpc.RpcServerConf
+}
+```
+
+Add yaml configuration.   
+
+```
+nano ./post/api/etc/post-api.yaml
+```
+
+Intergrate rpc for api in yaml file.   
+
+```diff
+Port: 8888
++ PostRpc:
++   Etcd:
++     Hosts:
++     - 127.0.0.1:2379
++     Key: post.rpc
+```
+
+Refine the service dependencies:
+
+```
+nano ./post/internal/svc/
+```
+
+To test the post-api:
+
+```
+etcd
+
+```
