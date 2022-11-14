@@ -1,0 +1,90 @@
+syntax = "proto3";
+
+option go_package ="./post";
+
+package post;
+
+// ------------------------------------ 
+// Messages
+// ------------------------------------ 
+
+
+//--------------------------------Post--------------------------------
+message Post {
+  string id = 1; //id
+  int64 createdAt = 2; //createdAt
+  int64 updatedAt = 3; //updatedAt
+  string title = 4; //title
+  int64 published = 5; //published
+  string desc = 6; //desc
+}
+
+message AddPostReq {
+  int64 createdAt = 1; //createdAt
+  int64 updatedAt = 2; //updatedAt
+  string title = 3; //title
+  int64 published = 4; //published
+  string desc = 5; //desc
+}
+
+message AddPostResp {
+}
+
+message UpdatePostReq {
+  string id = 1; //id
+  int64 createdAt = 2; //createdAt
+  int64 updatedAt = 3; //updatedAt
+  string title = 4; //title
+  int64 published = 5; //published
+  string desc = 6; //desc
+}
+
+message UpdatePostResp {
+}
+
+message DelPostReq {
+  int64 id = 1; //id
+}
+
+message DelPostResp {
+}
+
+message GetPostByIdReq {
+  int64 id = 1; //id
+}
+
+message GetPostByIdResp {
+  Post post = 1; //post
+}
+
+message SearchPostReq {
+  int64 page = 1; //page
+  int64 pageSize = 2; //pageSize
+  string id = 3; //id
+  int64 createdAt = 4; //createdAt
+  int64 updatedAt = 5; //updatedAt
+  string title = 6; //title
+  int64 published = 7; //published
+  string desc = 8; //desc
+}
+
+message SearchPostResp {
+  repeated Post post = 1; //post
+}
+
+
+
+// ------------------------------------ 
+// Rpc Func
+// ------------------------------------ 
+
+service service{ 
+
+	 //-----------------------Post----------------------- 
+	 rpc AddPost(AddPostReq) returns (AddPostResp); 
+	 rpc UpdatePost(UpdatePostReq) returns (UpdatePostResp); 
+	 rpc DelPost(DelPostReq) returns (DelPostResp); 
+	 rpc GetPostById(GetPostByIdReq) returns (GetPostByIdResp); 
+	 rpc SearchPost(SearchPostReq) returns (SearchPostResp); 
+
+}

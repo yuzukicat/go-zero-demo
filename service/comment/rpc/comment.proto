@@ -1,0 +1,81 @@
+syntax = "proto3";
+
+option go_package ="./comment";
+
+package comment;
+
+// ------------------------------------ 
+// Messages
+// ------------------------------------ 
+
+//--------------------------------Comment--------------------------------
+message Comment {
+  string id = 1; //id
+  int64 createdAt = 2; //createdAt
+  string content = 3; //content
+  string postID = 4; //postID
+}
+
+message AddCommentReq {
+  int64 createdAt = 1; //createdAt
+  string content = 2; //content
+  string postID = 3; //postID
+}
+
+message AddCommentResp {
+}
+
+message UpdateCommentReq {
+  string id = 1; //id
+  int64 createdAt = 2; //createdAt
+  string content = 3; //content
+  string postID = 4; //postID
+}
+
+message UpdateCommentResp {
+}
+
+message DelCommentReq {
+  int64 id = 1; //id
+}
+
+message DelCommentResp {
+}
+
+message GetCommentByIdReq {
+  int64 id = 1; //id
+}
+
+message GetCommentByIdResp {
+  Comment comment = 1; //comment
+}
+
+message SearchCommentReq {
+  int64 page = 1; //page
+  int64 pageSize = 2; //pageSize
+  string id = 3; //id
+  int64 createdAt = 4; //createdAt
+  string content = 5; //content
+  string postID = 6; //postID
+}
+
+message SearchCommentResp {
+  repeated Comment comment = 1; //comment
+}
+
+
+
+// ------------------------------------ 
+// Rpc Func
+// ------------------------------------ 
+
+service service{ 
+
+	 //-----------------------Comment----------------------- 
+	 rpc AddComment(AddCommentReq) returns (AddCommentResp); 
+	 rpc UpdateComment(UpdateCommentReq) returns (UpdateCommentResp); 
+	 rpc DelComment(DelCommentReq) returns (DelCommentResp); 
+	 rpc GetCommentById(GetCommentByIdReq) returns (GetCommentByIdResp); 
+	 rpc SearchComment(SearchCommentReq) returns (SearchCommentResp); 
+
+}
