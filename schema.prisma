@@ -12,7 +12,7 @@ generator db {
 }
 
 model Post {
-    id        String    @id @default(cuid())
+    id        Int       @id @default(autoincrement())
     createdAt DateTime  @default(now())
     updatedAt DateTime  @updatedAt
     title     String
@@ -22,10 +22,10 @@ model Post {
 }
 
 model Comment {
-    id        String   @id @default(cuid())
+    id        Int      @id @default(autoincrement())
     createdAt DateTime @default(now())
     content   String
 
-    post   Post   @relation(fields: [postID], references: [id])
-    postID String
+    post   Post @relation(fields: [postID], references: [id])
+    postID Int
 }

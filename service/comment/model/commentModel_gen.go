@@ -18,16 +18,16 @@ import (
 var (
 	commentFieldNames          = builder.RawFieldNames(&Comment{})
 	commentRows                = strings.Join(commentFieldNames, ",")
-	commentRowsExpectAutoSet   = strings.Join(stringx.Remove(commentFieldNames, "`updated_at`", "`update_time`", "`create_at`", "`created_at`", "`create_time`", "`update_at`"), ",")
-	commentRowsWithPlaceHolder = strings.Join(stringx.Remove(commentFieldNames, "`id`", "`updated_at`", "`update_time`", "`create_at`", "`created_at`", "`create_time`", "`update_at`"), "=?,") + "=?"
+	commentRowsExpectAutoSet   = strings.Join(stringx.Remove(commentFieldNames, "`id`", "`create_time`", "`update_time`", "`create_at`", "`update_at`"), ",")
+	commentRowsWithPlaceHolder = strings.Join(stringx.Remove(commentFieldNames, "`id`", "`create_time`", "`update_time`", "`create_at`", "`update_at`"), "=?,") + "=?"
 )
 
 type (
 	commentModel interface {
 		Insert(ctx context.Context, data *Comment) (sql.Result, error)
-		FindOne(ctx context.Context, id string) (*Comment, error)
+		FindOne(ctx context.Context, id int64) (*Comment, error)
 		Update(ctx context.Context, data *Comment) error
-		Delete(ctx context.Context, id string) error
+		Delete(ctx context.Context, id int64) error
 	}
 
 	defaultCommentModel struct {
@@ -36,10 +36,10 @@ type (
 	}
 
 	Comment struct {
-		Id        string    `db:"id"`
+		Id        int64     `db:"id"`
 		CreatedAt time.Time `db:"createdAt"`
 		Content   string    `db:"content"`
-		PostID    string    `db:"postID"`
+		PostID    int64     `db:"postID"`
 	}
 )
 
@@ -50,13 +50,13 @@ func newCommentModel(conn sqlx.SqlConn) *defaultCommentModel {
 	}
 }
 
-func (m *defaultCommentModel) Delete(ctx context.Context, id string) error {
+func (m *defaultCommentModel) Delete(ctx context.Context, id int64) error {
 	query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 	_, err := m.conn.ExecCtx(ctx, query, id)
 	return err
 }
 
-func (m *defaultCommentModel) FindOne(ctx context.Context, id string) (*Comment, error) {
+func (m *defaultCommentModel) FindOne(ctx context.Context, id int64) (*Comment, error) {
 	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", commentRows, m.table)
 	var resp Comment
 	err := m.conn.QueryRowCtx(ctx, &resp, query, id)
@@ -71,8 +71,8 @@ func (m *defaultCommentModel) FindOne(ctx context.Context, id string) (*Comment,
 }
 
 func (m *defaultCommentModel) Insert(ctx context.Context, data *Comment) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?)", m.table, commentRowsExpectAutoSet)
-	ret, err := m.conn.ExecCtx(ctx, query, data.Id, data.CreatedAt, data.Content, data.PostID)
+	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?)", m.table, commentRowsExpectAutoSet)
+	ret, err := m.conn.ExecCtx(ctx, query, data.CreatedAt, data.Content, data.PostID)
 	return ret, err
 }
 

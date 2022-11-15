@@ -1,8 +1,8 @@
 Name: post.rpc
-ListenOn: 0.0.0.0:8080
+ListenOn: 127.0.0.1:8080
 Etcd:
   Hosts:
   - 127.0.0.1:2379
   Key: post.rpc
 Mysql:
-  DataSource: yuzuki:password@tcp(localhost:3306)/mydb?charset=utf8mb4&parseTime=true&loc=Asia%2FTokyo
+  DataSource: $user:$password@tcp($url)/$db?charset=utf8mb4&parseTime=true&loc=Asia%2FTokyo

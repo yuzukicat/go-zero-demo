@@ -3,7 +3,11 @@ module go-demo
 go 1.19
 
 require (
-	github.com/lib/pq v1.10.7
+	github.com/iancoleman/strcase v0.2.0
+	github.com/joho/godotenv v1.4.0
+	github.com/prisma/prisma-client-go v0.16.2
+	github.com/shopspring/decimal v1.3.1
+	github.com/takuoki/gocase v1.1.1
 	github.com/zeromicro/go-zero v1.4.2
 	google.golang.org/grpc v1.50.1
 	google.golang.org/protobuf v1.28.1

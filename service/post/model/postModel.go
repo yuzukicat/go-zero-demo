@@ -1,9 +1,6 @@
 package model
 
-import (
-	// "github.com/lib/pq"
-	"github.com/zeromicro/go-zero/core/stores/sqlx"
-)
+import "github.com/zeromicro/go-zero/core/stores/sqlx"
 
 var _ PostModel = (*customPostModel)(nil)
 

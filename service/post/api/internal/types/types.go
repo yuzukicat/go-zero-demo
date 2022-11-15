@@ -10,7 +10,7 @@ type GetPostByIdResp struct {
 }
 
 type Post struct {
-	Id        string `json:"id"`
+	Id        int64  `json:"id"`
 	CreatedAt int64  `json:"createdAt"`
 	UpdatedAt int64  `json:"updatedAt"`
 	Title     string `json:"title"`

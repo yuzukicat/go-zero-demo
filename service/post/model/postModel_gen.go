@@ -18,16 +18,16 @@ import (
 var (
 	postFieldNames          = builder.RawFieldNames(&Post{})
 	postRows                = strings.Join(postFieldNames, ",")
-	postRowsExpectAutoSet   = strings.Join(stringx.Remove(postFieldNames, "`created_at`", "`create_time`", "`update_at`", "`updated_at`", "`update_time`", "`create_at`"), ",")
-	postRowsWithPlaceHolder = strings.Join(stringx.Remove(postFieldNames, "`id`", "`created_at`", "`create_time`", "`update_at`", "`updated_at`", "`update_time`", "`create_at`"), "=?,") + "=?"
+	postRowsExpectAutoSet   = strings.Join(stringx.Remove(postFieldNames, "`id`", "`create_time`", "`update_time`", "`create_at`", "`update_at`"), ",")
+	postRowsWithPlaceHolder = strings.Join(stringx.Remove(postFieldNames, "`id`", "`create_time`", "`update_time`", "`create_at`", "`update_at`"), "=?,") + "=?"
 )
 
 type (
 	postModel interface {
 		Insert(ctx context.Context, data *Post) (sql.Result, error)
-		FindOne(ctx context.Context, id string) (*Post, error)
+		FindOne(ctx context.Context, id int64) (*Post, error)
 		Update(ctx context.Context, data *Post) error
-		Delete(ctx context.Context, id string) error
+		Delete(ctx context.Context, id int64) error
 	}
 
 	defaultPostModel struct {
@@ -36,7 +36,7 @@ type (
 	}
 
 	Post struct {
-		Id        string    `db:"id"`
+		Id        int64     `db:"id"`
 		CreatedAt time.Time `db:"createdAt"`
 		UpdatedAt time.Time `db:"updatedAt"`
 		Title     string    `db:"title"`
@@ -52,13 +52,13 @@ func newPostModel(conn sqlx.SqlConn) *defaultPostModel {
 	}
 }
 
-func (m *defaultPostModel) Delete(ctx context.Context, id string) error {
+func (m *defaultPostModel) Delete(ctx context.Context, id int64) error {
 	query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 	_, err := m.conn.ExecCtx(ctx, query, id)
 	return err
 }
 
-func (m *defaultPostModel) FindOne(ctx context.Context, id string) (*Post, error) {
+func (m *defaultPostModel) FindOne(ctx context.Context, id int64) (*Post, error) {
 	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", postRows, m.table)
 	var resp Post
 	err := m.conn.QueryRowCtx(ctx, &resp, query, id)
@@ -73,8 +73,8 @@ func (m *defaultPostModel) FindOne(ctx context.Context, id string) (*Post, error
 }
 
 func (m *defaultPostModel) Insert(ctx context.Context, data *Post) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?)", m.table, postRowsExpectAutoSet)
-	ret, err := m.conn.ExecCtx(ctx, query, data.Id, data.CreatedAt, data.UpdatedAt, data.Title, data.Published, data.Desc)
+	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?)", m.table, postRowsExpectAutoSet)
+	ret, err := m.conn.ExecCtx(ctx, query, data.CreatedAt, data.UpdatedAt, data.Title, data.Published, data.Desc)
 	return ret, err
 }
 

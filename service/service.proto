@@ -10,26 +10,26 @@ package pb;
 
 //--------------------------------Comment--------------------------------
 message Comment {
-  string id = 1; //id
+  int64 id = 1; //id
   int64 createdAt = 2; //createdAt
   string content = 3; //content
-  string postID = 4; //postID
+  int64 postID = 4; //postID
 }
 
 message AddCommentReq {
   int64 createdAt = 1; //createdAt
   string content = 2; //content
-  string postID = 3; //postID
+  int64 postID = 3; //postID
 }
 
 message AddCommentResp {
 }
 
 message UpdateCommentReq {
-  string id = 1; //id
+  int64 id = 1; //id
   int64 createdAt = 2; //createdAt
   string content = 3; //content
-  string postID = 4; //postID
+  int64 postID = 4; //postID
 }
 
 message UpdateCommentResp {
@@ -53,10 +53,10 @@ message GetCommentByIdResp {
 message SearchCommentReq {
   int64 page = 1; //page
   int64 pageSize = 2; //pageSize
-  string id = 3; //id
+  int64 id = 3; //id
   int64 createdAt = 4; //createdAt
   string content = 5; //content
-  string postID = 6; //postID
+  int64 postID = 6; //postID
 }
 
 message SearchCommentResp {
@@ -65,7 +65,7 @@ message SearchCommentResp {
 
 //--------------------------------Post--------------------------------
 message Post {
-  string id = 1; //id
+  int64 id = 1; //id
   int64 createdAt = 2; //createdAt
   int64 updatedAt = 3; //updatedAt
   string title = 4; //title
@@ -85,7 +85,7 @@ message AddPostResp {
 }
 
 message UpdatePostReq {
-  string id = 1; //id
+  int64 id = 1; //id
   int64 createdAt = 2; //createdAt
   int64 updatedAt = 3; //updatedAt
   string title = 4; //title
@@ -114,7 +114,7 @@ message GetPostByIdResp {
 message SearchPostReq {
   int64 page = 1; //page
   int64 pageSize = 2; //pageSize
-  string id = 3; //id
+  int64 id = 3; //id
   int64 createdAt = 4; //createdAt
   int64 updatedAt = 5; //updatedAt
   string title = 6; //title
