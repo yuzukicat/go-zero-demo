@@ -13,9 +13,9 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
 		[]rest.Route{
 			{
-				Method:  http.MethodGet,
-				Path:    "/api/post/get/:id",
-				Handler: postHandler(serverCtx),
+				Method:  http.MethodPost,
+				Path:    "/api/post/getPostById",
+				Handler: getPostByIdHandler(serverCtx),
 			},
 		},
 	)

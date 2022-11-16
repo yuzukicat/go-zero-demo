@@ -9,7 +9,7 @@ import (
 	"go-demo/service/post/api/internal/types"
 )
 
-func postHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+func getPostByIdHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req types.GetPostByIdReq
 		if err := httpx.Parse(r, &req); err != nil {
@@ -17,8 +17,8 @@ func postHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			return
 		}
 
-		l := logic.NewPostLogic(r.Context(), svcCtx)
-		resp, err := l.Post(&req)
+		l := logic.NewGetPostByIdLogic(r.Context(), svcCtx)
+		resp, err := l.GetPostById(&req)
 		if err != nil {
 			httpx.Error(w, err)
 		} else {

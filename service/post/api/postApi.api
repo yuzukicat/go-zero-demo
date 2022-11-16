@@ -17,7 +17,7 @@ type (
 	}
 )
 
-service user-api {
-	@handler post
-	get /api/post/get/:id (GetPostByIdReq) returns (GetPostByIdResp)
+service post-api {
+	@handler getPostById
+	post /api/post/getPostById (GetPostByIdReq) returns (GetPostByIdResp)
 }

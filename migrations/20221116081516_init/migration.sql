@@ -24,4 +24,4 @@ CREATE TABLE `Comment` (
 ALTER TABLE `Comment` ADD CONSTRAINT `Comment_postID_fkey` FOREIGN KEY (`postID`) REFERENCES `Post`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- SEED
-INSERT INTO `Post` (`id`,`updatedAt`,`title`,`published`) VALUES (1,CURRENT_TIMESTAMP(3),"testpost",false);
+INSERT INTO `Post` (`id`,`updatedAt`,`title`,`published`, `desc`) VALUES (1,CURRENT_TIMESTAMP(3),"testpost",false, "desc");

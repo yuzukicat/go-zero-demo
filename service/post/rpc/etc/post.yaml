@@ -5,4 +5,4 @@ Etcd:
   - 127.0.0.1:2379
   Key: post.rpc
 Mysql:
-  DataSource: $user:$password@tcp($url)/$db?charset=utf8mb4&parseTime=true&loc=Asia%2FTokyo
+  DataSource: yuzuki:password@tcp(localhost:3306)/mydb?charset=utf8mb4&parseTime=true&loc=Asia%2FTokyo

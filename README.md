@@ -23,7 +23,7 @@ export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
 
 Restart.   
 
-Install redis (optional), protobuf, protoc-gen-go, etcd, goctl, Go for VS Code (Extension), Ctrl+Shift+P (Go>Install/Update Tools).   
+Install redis (optional), protobuf, protoc-gen-go, etcd, goctl, Go for VS Code (Extension), Ctrl+Shift+P (Go>Install/Update Tools), ext:proto.   
 
 ```
 cd Package
@@ -113,7 +113,7 @@ go get -u github.com/prisma/prisma-client-go
 datasource db {
     // could be postgresql or mysql
     provider = "mysql"
-    url      = "mysql://yuzuki:password@localhost:3306/mydb"
+    url      = "mysql://username:password@localhost:3306/mydb"
 }
 
 generator db {
@@ -151,6 +151,15 @@ go mod tidy
 ```
 
 > After the migration, the Prisma Client Go client is automatically generated in your project.   
+
+Seed mydb>Post table with test data.
+
+Edit`migrations/xxxx_init/migration.sql`.   
+
+```diff
++ -- SEED
++ INSERT INTO `Post` (`id`,`updatedAt`,`title`,`published`, `desc`) VALUES (1,CURRENT_TIMESTAMP(3),"testpost",false, "desc");
+```
 
 > If you just want to re-generate the client, run:   
 
@@ -221,7 +230,7 @@ Generate Protobuf from mysql.
 cd go-demo
 mkdir service
 cd service
-sql2pb -go_package ./pb -host localhost -package pb -password password -port 3306 -schema mydb -service_name service -user yuzuki > service.proto
+sql2pb -go_package ./pb -host localhost -package pb -password password -port 3306 -schema mydb -service_name service -user username > service.proto
 ```
 
 Directory Structure.   
@@ -426,8 +435,8 @@ service service {
 ## [Generate Model from mysql, Generate Rpc using Prodoc](https://github.com/Mikaelemmmm/sql2pb)   
 
 ```
-goctl model mysql datasource -url="yuzuki:password@tcp(localhost:3306)/mydb" -table="Post" -dir=./post/model --style=goZero
-goctl model mysql datasource -url="yuzuki:password@tcp(localhost:3306)/mydb" -table="Comment" -dir=./comment/model --style=goZero
+goctl model mysql datasource -url="username:password@tcp(localhost:3306)/mydb" -table="Post" -dir=./post/model --style=goZero
+goctl model mysql datasource -url="username:password@tcp(localhost:3306)/mydb" -table="Comment" -dir=./comment/model --style=goZero
 cd ..
 go mod tidy
 cd service
@@ -452,8 +461,8 @@ Edit`post.yaml`.
 
 ```diff
   Key: post.rpc
-+ Mysql:
-+   DataSource: $user:$password@tcp($url)/$db?charset=utf8mb4&parseTime=true&loc=Asia%2FTokyo
++Mysql:
++  DataSource: username:password@tcp(localhost:3306)/mydb?charset=utf8mb4&parseTime=true&loc=Asia%2FTokyo
 ```
 
 Add database struct for rpc config.   
@@ -590,9 +599,9 @@ type (
 	}
 )
 
-service user-api {
-	@handler post
-	get /api/post/get/:id (GetPostByIdReq) returns (GetPostByIdResp)
+service post-api {
+	@handler getPostById
+	post /api/post/getPostById (GetPostByIdReq) returns (GetPostByIdResp)
 }
 ```
 
@@ -622,7 +631,7 @@ package config
 type Config struct {
 +	rest.RestConf
 -   zrpc.RpcServerConf
-+	PostRpc zrpc.RpcClinetConf
++	PostRpc zrpc.RpcClientConf
 }
 ```
 
@@ -632,15 +641,17 @@ Add yaml configuration.
 nano ./post/api/etc/post-api.yaml
 ```
 
+
+
 Intergrate rpc for api in yaml file.   
 
 ```diff
 Port: 8888
 + PostRpc:
-+   Etcd:
-+     Hosts:
-+     - 127.0.0.1:2379
-+     Key: post.rpc
++  Etcd:
++    Hosts:
++      - 127.0.0.1:2379
++    Key: post.rpc
 ```
 
 Refine the service dependencies.   
@@ -674,11 +685,66 @@ func NewServiceContext(c config.Config) *ServiceContext {
 }
 ```
 
+Supplementary logic.   
+
+```
+nano ./post/api/internal/logic/postLogic.go
+```
+
+Edit`postLogic.go`.   
+
+```diff
+import (
+	"context"
++	"encoding/json"
++	"fmt"
+
+	"go-demo/service/post/api/internal/svc"
+	"go-demo/service/post/api/internal/types"
+	"go-demo/service/post/rpc/types/post"
+
+	"github.com/zeromicro/go-zero/core/logx"
+)
+
+...
+
+func (l *PostLogic) Post(req *types.GetPostByIdReq) (resp *types.GetPostByIdResp, err error) {
+	// todo: add your logic here and delete this line
+- return
++	IdNumber := json.Number(fmt.Sprintf("%v", l.ctx.Value("Id")))
++	logx.Infof("Id: %s", IdNumber)
++	Id, err := IdNumber.Int64()
++	if err != nil {
++		return nil, err
++	}
+
++	// use post rpc
++	onePost, err := l.svcCtx.PostRpc.GetPostById(l.ctx, &post.GetPostByIdReq{
++		Id: Id,
++	})
++	if err != nil {
++		return nil, err
++	}
++
++	return &types.GetPostByIdResp{
++		Post: &types.Post{
++			Id:        onePost.Post.Id,
++			CreatedAt: onePost.Post.CreatedAt,
++			UpdatedAt: onePost.Post.UpdatedAt,
++			Title:     onePost.Post.Title,
++			Published: onePost.Post.Published,
++			Desc:      onePost.Post.Desc,
++		},
++	}, nil
+```
+
 To test the post-api:
 
 ```
 etcd
 go run ./post/rpc/post.go -f ./post/rpc/etc/post.yaml
 go run ./post/api/post.go -f ./post/api/etc/post-api.yaml
-curl -i -X GET http://localhost:8888/api/post/get/255486129307
+curl -i -X POST http://localhost:8888/api/post/getPostById \
+  -H 'Content-Type: application/json' \
+  -d '{"id":1}'
 ```
