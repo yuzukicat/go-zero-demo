@@ -21,7 +21,7 @@
     <br />
     <a href="https://github.com/yuzukicat/go-zero-demo"><strong>The source code for the working demo in github »</strong></a>
     .
-    <a href="https://github.com/yuzukicat/parkinsons-disease/issues"><strong>The blog article  »</strong></a>
+    <a href="https://kamisu66.com/2022/11/13/Use-go-zero-prisma-to-introspect-SQL-generating-go-struct-protobuf-gRPC-server-client-and-REST-API"><strong>The blog article  »</strong></a>
   </p>
 </div>
 
