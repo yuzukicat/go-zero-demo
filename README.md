@@ -1,19 +1,20 @@
-## [Install go | Arch Linux](https://go.dev/doc/install)   
+## Install go | Arch Linux [1] [2]  
+
 > Remove any previous Go installation by deleting the /usr/local/go folder (if it exists), then extract the archive you just downloaded into /usr/local, creating a fresh Go tree in /usr/local/go:   
+
 > (You may need to run the command as root or through sudo).   
+
 > Do not untar the archive into an existing /usr/local/go tree. This is known to produce broken Go installations.   
 
-```
+```sh
 cd
 cd Downloads
-su root
 rm -rf /usr/local/go && tar -C /usr/local -xzf go1.19.3.linux-amd64.tar.gz
 ```
 
-Add /usr/local/go/bin to the PATH environment variable.   
 In a new terminal.   
 
-```
+```sh
 cd
 sudo nano ~/.xprofile
 export GOROOT=/usr/local/go                                                                                        
@@ -23,9 +24,9 @@ export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
 
 Restart.   
 
-Install redis (optional), protobuf, protoc-gen-go, etcd, goctl, Go for VS Code (Extension), Ctrl+Shift+P (Go>Install/Update Tools), ext:proto.   
+Install ```redis (optional), protobuf, protoc-gen-go, etcd, goctl, Go for VS Code (Extension), Ctrl+Shift+P (Go>Install/Update Tools), ext:proto```.   
 
-```
+```sh
 cd Package
 git clone https://aur.archlinux.org/protoc-gen-go.git
 cd protoc-gen-go
@@ -39,60 +40,64 @@ cd Workspace
 go install github.com/zeromicro/go-zero/tools/goctl@latest
 ```
 
-## [Install MariaDB | Arch Linux](https://wiki.archlinux.org/title/MySQL)   
-https://wiki.archlinux.org/title/MariaDB   
-> Install [MariaDB](https://archlinux.org/packages/extra/x86_64/mariadb) and additional packages (mariadb-clients, mariadb-libs) in Arch Linux.   
-> Install mariadb, and run the following command before starting the mariadb.service:   
+## Install MariaDB | Arch Linux [3] [4]   
 
-```
+> Install ```MariaDB``` [5] and additional packages (```mariadb-clients, mariadb-libs```) in Arch Linux.   
+
+> Install mariadb, and run the following command ```before starting the mariadb.service```:   
+
+```sh
 mariadb-install-db --user=mysql --basedir=/usr --datadir=/var/lib/mysql
 ```
 
-> Now mariadb.service can be [started and/or enabled](https://mariadb.com/kb/en/systemd).   
+> Now mariadb.service can be ```started and/or enabled``` [6].   
+
 > Starting the MariaDB Server Process on Boot.   
+
 > MariaDB's systemd service can be configured to start at boot by executing the following:   
 
-```
+```sh
 sudo systemctl enable mariadb.service
 ```
 
 > Starting the MariaDB Server Process.   
+
 > MariaDB's systemd service can be started by executing the following:   
 
-```
+```sh
 sudo systemctl start mariadb.service
 ```
 
 > Once you have started the MySQL server and added a root account, you may want to change the default configuration.   
+
 > To log in as root on the MySQL server, use the following command:   
 
-```
+```sh
 sudo mysql -u root -p
 ```
 
 > Add user.   
-> Creating a new user takes two steps: create the user; grant privileges. In the below example, the user monty with some_pass as password is being created, then granted full permissions to the database mydb:   
-The reason why we do this is that the prisma tool we are going to use creates shadow database for development, and requires [shadow database user permissions](https://www.prisma.io/docs/concepts/components/prisma-migrate/shadow-database).   
+
+> Creating a new user takes two steps: create the user; grant privileges. In the below example, the user monty with some_pass as password is being created, then ```granted full permissions``` to the database mydb:   
+The reason why we do this is that the prisma tool we are going to use creates shadow database for development, and requires ```shadow database user permissions``` [7].   
+
 > In order to create and delete the shadow database when using development commands such as migrate dev and migrate reset, Prisma Migrate currently requires that the database user defined in your datasource has permission to create databases.   
+
 > MySQL: Database user must have CREATE, ALTER, DROP, REFERENCES ON *.* privileges.   
 
-```
+```sql
 MariaDB> CREATE USER 'monty'@'localhost' IDENTIFIED BY 'some_pass';
 MariaDB> GRANT ALL PRIVILEGES ON *.* TO 'monty'@'localhost';
-MariaDB> FLUSH PRIVILEGES;
-MariaDB> quit
+MariaDB> FLUSH PRIVILEGES;MariaDB
 ```
 
-## Set up [Prisma Client Go](https://github.com/prisma/prisma-client-go)   
-https://www.prisma.io/docs/reference/database-reference/supported-databases   
-https://www.prisma.io/docs/getting-started/quickstart   
 > Initialise a new Go project.   
+
 > If you don't have a Go project yet, initialise one using Go modules:   
 
-> Init multi-module workspaces.   
-https://go.dev/doc/tutorial/workspaces   
+> Init multi-module workspaces [8].   
 
-```
+```sh
 cd
 cd Workspace
 go work init ./go-demo
@@ -103,7 +108,7 @@ go mod init go-demo
 
 > Get Prisma Client Go.   
 
-```
+```sh
 go get -u github.com/prisma/prisma-client-go
 ```
 
@@ -145,7 +150,7 @@ model Comment {
 
 > To get this up and running in your database, we use the Prisma migration tool migrate to create and migrate our database:   
 
-```
+```sh
 go run github.com/prisma/prisma-client-go migrate dev --name init
 go mod tidy
 ```
@@ -154,7 +159,7 @@ go mod tidy
 
 Seed mydb>Post table with test data.
 
-Edit`migrations/xxxx_init/migration.sql`.   
+Edit `migrations/xxxx_init/migration.sql`.   
 
 ```diff
 + -- SEED
@@ -163,36 +168,35 @@ Edit`migrations/xxxx_init/migration.sql`.
 
 > If you just want to re-generate the client, run:   
 
-```
+```sh
 go run github.com/prisma/prisma-client-go generate.
 ```
 
-## Use go-zero to init an API-Gateway (Hello World Demo)   
+## Use go-zero to init an API-Gateway (Hello World Demo) [9]   
 
 Install go-zero, protoc-gen-go.   
 
-```
+```sh
 go get -u github.com/zeromicro/go-zero@latest
 go get -u google.golang.org/protobuf@latest
 ```
 
 Create greet service (API).   
 
-```
+```sh
 goctl api new greet --style=goZero
 go mod tidy
 ```
 
 Write logic:   
 
-```
+```sh
 nano greet/internal/logic/greetlogic.go
 ```
 
 Write the response message.   
 
-```
-diff
+```diff
 func (l *GreetLogic) Greet(req types.Request) (*types.Response, error) {
 +   return &types.Response{
 +       Message: "Hello go-zero",
@@ -204,29 +208,29 @@ func (l *GreetLogic) Greet(req types.Request) (*types.Response, error) {
 Start and access the service.   
 Start service.   
 
-```
+```sh
 cd greet
 go run greet.go -f etc/greet-api.yaml
 ```
 
 Access service.   
 
-```
+```sh
 curl -i -X GET http://localhost:8888/from/you
 ```
 
-## [Generate Protobuf from mysql and use generated prodoc to write proto file for rpc](https://github.com/Mikaelemmmm/sql2pb)   
+## Generate Protobuf from mysql and use generated prodoc to write proto file for rpc [10]   
 
-Go install `Mikaelemmmm/sql2pb`.   
+Go install `Mikaelemmmm/sql2pb` [11].   
 
-```
+```sh
 cd ../..
 go install github.com/Mikaelemmmm/sql2pb@latest
 ```
 
 Generate Protobuf from mysql.   
 
-```
+```sh
 cd go-demo
 mkdir service
 cd service
@@ -235,7 +239,7 @@ sql2pb -go_package ./pb -host localhost -package pb -password password -port 330
 
 Directory Structure.   
 
-```
+```sh
 mkdir post
 mkdir comment
 cd post
@@ -252,7 +256,124 @@ touch comment.proto
 cd ../..
 ```
 
-Edit`post.proto`.   
+```
+.
+├── db
+│   ├── db_gen.go
+│   ├── query-engine-debian-openssl-3.0.x_gen.go
+│   └── query-engine-linux_gen.go
+├── go.mod
+├── go.sum
+├── greet
+│   ├── etc
+│   │   └── greet-api.yaml
+│   ├── greet.api
+│   ├── greet.go
+│   └── internal
+│       ├── config
+│       │   └── config.go
+│       ├── handler
+│       │   ├── greetHandler.go
+│       │   └── routes.go
+│       ├── logic
+│       │   └── greetLogic.go
+│       ├── svc
+│       │   └── serviceContext.go
+│       └── types
+│           └── types.go
+├── migrations
+│   ├── 20221116081516_init
+│   │   └── migration.sql
+│   └── migration_lock.toml
+├── README.md
+├── schema.prisma
+└── service
+    ├── comment
+    │   ├── api
+    │   ├── model
+    │   │   ├── commentModel_gen.go
+    │   │   ├── commentModel.go
+    │   │   └── vars.go
+    │   └── rpc
+    │       ├── comment.go
+    │       ├── comment.proto
+    │       ├── etc
+    │       │   └── comment.yaml
+    │       ├── internal
+    │       │   ├── config
+    │       │   │   └── config.go
+    │       │   ├── logic
+    │       │   │   ├── addCommentLogic.go
+    │       │   │   ├── delCommentLogic.go
+    │       │   │   ├── getCommentByIdLogic.go
+    │       │   │   ├── searchCommentLogic.go
+    │       │   │   └── updateCommentLogic.go
+    │       │   ├── server
+    │       │   │   └── serviceServer.go
+    │       │   └── svc
+    │       │       └── serviceContext.go
+    │       ├── service
+    │       │   └── service.go
+    │       └── types
+    │           └── comment
+    │               ├── comment_grpc.pb.go
+    │               └── comment.pb.go
+    ├── default.etcd
+    │   └── member
+    │       ├── snap
+    │       │   └── db
+    │       └── wal
+    │           └── 0000000000000000-0000000000000000.wal
+    ├── post
+    │   ├── api
+    │   │   ├── etc
+    │   │   │   └── post-api.yaml
+    │   │   ├── internal
+    │   │   │   ├── config
+    │   │   │   │   └── config.go
+    │   │   │   ├── handler
+    │   │   │   │   ├── getPostByIdHandler.go
+    │   │   │   │   └── routes.go
+    │   │   │   ├── logic
+    │   │   │   │   └── getPostByIdLogic.go
+    │   │   │   ├── svc
+    │   │   │   │   └── serviceContext.go
+    │   │   │   └── types
+    │   │   │       └── types.go
+    │   │   ├── postApi.api
+    │   │   └── post.go
+    │   ├── model
+    │   │   ├── postModel_gen.go
+    │   │   ├── postModel.go
+    │   │   └── vars.go
+    │   └── rpc
+    │       ├── etc
+    │       │   └── post.yaml
+    │       ├── internal
+    │       │   ├── config
+    │       │   │   └── config.go
+    │       │   ├── logic
+    │       │   │   ├── addPostLogic.go
+    │       │   │   ├── delPostLogic.go
+    │       │   │   ├── getPostByIdLogic.go
+    │       │   │   ├── searchPostLogic.go
+    │       │   │   └── updatePostLogic.go
+    │       │   ├── server
+    │       │   │   └── serviceServer.go
+    │       │   └── svc
+    │       │       └── serviceContext.go
+    │       ├── post.go
+    │       ├── post.proto
+    │       ├── service
+    │       │   └── service.go
+    │       └── types
+    │           └── post
+    │               ├── post_grpc.pb.go
+    │               └── post.pb.go
+    └── service.proto
+```
+
+Edit `post.proto`.   
 
 ```
 syntax = "proto3";
@@ -352,7 +473,7 @@ service service {
 }
 ```
 
-Edit`comment.proto`.   
+Edit `comment.proto`.   
 
 ```
 syntax = "proto3";
@@ -432,9 +553,9 @@ service service {
 }
 ```
 
-## [Generate Model from mysql, Generate Rpc using Prodoc](https://github.com/Mikaelemmmm/sql2pb)   
+## Generate Model from mysql, Generate Rpc using Prodoc   
 
-```
+```sh
 goctl model mysql datasource -url="username:password@tcp(localhost:3306)/mydb" -table="Post" -dir=./post/model --style=goZero
 goctl model mysql datasource -url="username:password@tcp(localhost:3306)/mydb" -table="Comment" -dir=./comment/model --style=goZero
 cd ..
@@ -453,11 +574,11 @@ cd service
 
 Add database configuration for rpc in yaml file.   
 
-```
+```sh
 nano ./post/rpc/etc/post.yaml
 ```
 
-Edit`post.yaml`.   
+Edit `post.yaml`.   
 
 ```diff
   Key: post.rpc
@@ -467,11 +588,11 @@ Edit`post.yaml`.
 
 Add database struct for rpc config.   
 
-```
+```sh
 nano ./post/rpc/internal/config/config.go
 ```
 
-Edit`config.go`.   
+Edit `config.go`.   
 
 ```diff
 package config
@@ -488,7 +609,7 @@ type Config struct {
 
 In model, comment unused datasource.   
 
-```
+```sh
 nano ./post/model/postModel.go
 ```
 
@@ -502,15 +623,15 @@ import (
 )
 ```
 
-Also edit`commentModel.go` in the same way.   
+Also edit `commentModel.go` in the same way.   
 
 Add resource dependency (srvice context or model) for rpc in svc:  
 
-```
+```sh
 nano ./post/rpc/internal/svc/serviceContext.go
 ```
 
-Edit`serviceContext.go`.   
+Edit `serviceContext.go`.   
 
 ```diff
 package svc
@@ -538,11 +659,11 @@ func NewServiceContext(c config.Config) *ServiceContext {
 
 Write logic for rpc.   
 
-```
+```sh
 nano ./post/rpc/internal/logic/getPostByIdLogic.go
 ```
 
-Edit`getPostByIdLogic.go`.   
+Edit `getPostByIdLogic.go`.   
 
 ```diff
 func (l *GetPostByIdLogic) GetPostById(in *post.GetPostByIdReq) (*post.GetPostByIdResp, error) {
@@ -573,13 +694,13 @@ func (l *GetPostByIdLogic) GetPostById(in *post.GetPostByIdReq) (*post.GetPostBy
 
 Define APIs:   
 
-```
+```sh
 touch ./post/api/postApi.api
 ```
 
-Edit`postApi.api`.   
+Edit `postApi.api`.   
 
-```
+```go
 type (
 	GetPostByIdReq {
 		Id int64 `json:"id"`
@@ -607,17 +728,11 @@ service post-api {
 
 Generate api services.   
 
-```
-goctl api go --api ./post/api/postApi.api -dir ./post/api --style=goZero
-```
-
-Add restapi configuration for api config.   
-
-```
-nano ./post/api/internal/config/config.go
+```sh
+goctl api go --api ./pw
 ```
 
-Edit`config.go`.   
+Edit `config.go`.   
 
 ```diff
 package config
@@ -637,7 +752,7 @@ type Config struct {
 
 Add yaml configuration.   
 
-```
+```sh
 nano ./post/api/etc/post-api.yaml
 ```
 
@@ -656,7 +771,7 @@ Port: 8888
 
 Refine the service dependencies.   
 
-```
+```sh
 nano ./post/api/internal/svc/serviceContext.go
 ```
 
@@ -679,21 +794,7 @@ type ServiceContext struct {
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	return &ServiceContext{
-		Config:  c,
-+		PostRpc: service.NewService(zrpc.MustNewClient(c.PostRpc)),
-	}
-}
-```
-
-Supplementary logic.   
-
-```
-nano ./post/api/internal/logic/postLogic.go
-```
-
-Edit`postLogic.go`.   
-
-```diff
+		Config:  c,https://wiki.archlinux.org/title/MySQL
 import (
 	"context"
 +	"encoding/json"
@@ -711,16 +812,9 @@ import (
 func (l *PostLogic) Post(req *types.GetPostByIdReq) (resp *types.GetPostByIdResp, err error) {
 	// todo: add your logic here and delete this line
 - return
-+	IdNumber := json.Number(fmt.Sprintf("%v", l.ctx.Value("Id")))
-+	logx.Infof("Id: %s", IdNumber)
-+	Id, err := IdNumber.Int64()
-+	if err != nil {
-+		return nil, err
-+	}
-
 +	// use post rpc
 +	onePost, err := l.svcCtx.PostRpc.GetPostById(l.ctx, &post.GetPostByIdReq{
-+		Id: Id,
++		Id: req.Id,
 +	})
 +	if err != nil {
 +		return nil, err
@@ -728,23 +822,34 @@ func (l *PostLogic) Post(req *types.GetPostByIdReq) (resp *types.GetPostByIdResp
 +
 +	return &types.GetPostByIdResp{
 +		Post: &types.Post{
-+			Id:        onePost.Post.Id,
-+			CreatedAt: onePost.Post.CreatedAt,
-+			UpdatedAt: onePost.Post.UpdatedAt,
-+			Title:     onePost.Post.Title,
-+			Published: onePost.Post.Published,
-+			Desc:      onePost.Post.Desc,
-+		},
-+	}, nil
++			Id:        onePost.Post.Id,(https://wiki.archlinux.org/title/MySQL)
 ```
 
-To test the post-api:
+## Known Issues
 
-```
-etcd
-go run ./post/rpc/post.go -f ./post/rpc/etc/post.yaml
-go run ./post/api/post.go -f ./post/api/etc/post-api.yaml
-curl -i -X POST http://localhost:8888/api/post/getPostById \
-  -H 'Content-Type: application/json' \
-  -d '{"id":1}'
-```
+- An mySQL record can not contain ```null``` value, if null, there will be an error that can not convert null to string, which means in prisma schema, the string? should be string.
+- In prisma schema, the Id should be the type Int, not string, which means that the advanced feature like cuid support is missing. Otherwise, in the generated model, the type of Id would be string (because go-zero introspacted the database and infered the type according to the database, but the protobuf uses `Mikaelemmmm/sql2pb` codegen)
+
+## References   
+
+[1]: https://go.dev/doc/install   
+
+[2]: https://go.dev/doc/tutorial/workspaces   
+
+[3]: https://wiki.archlinux.org/title/MySQL   
+
+[4]: https://wiki.archlinux.org/title/MariaDB   
+
+[5]: https://archlinux.org/packages/extra/x86_64/mariadb   
+
+[6]: https://mariadb.com/kb/en/systemd   
+
+[7]: https://www.prisma.io/docs/concepts/components/prisma-migrate/shadow-database   
+
+[8]: https://go.dev/doc/tutorial/workspaces   
+
+[9]: https://go-zero.dev   
+
+[10]: https://blog.csdn.net/wanglei19891210/article/details/124420212   
+
+[11]: https://github.com/Mikaelemmmm/sql2pb   
