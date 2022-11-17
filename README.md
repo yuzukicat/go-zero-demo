@@ -1,3 +1,30 @@
+<div id="top"></div>
+
+<!-- PROJECT LOGO -->
+<br />
+<div align="center">
+  <a href="https://github.com/yuzukicat/go-zero-demo">
+    <img src="./assets/getPostById.png" alt="go-zero codegen">
+  </a>
+  </br>
+  </br>
+  <a href="https://github.com/yuzukicat/go-zero-demo">
+    <img src="./assets/PostTable.png" alt="go-zero codegen">
+  </a>
+  </br>
+  </br>
+  <h3 align="center">Use go-zero, prisma to introspect SQL, generating go struct, protobuf, gRPC server / client and REST API</h3>
+  </br>
+  <p align="left">
+    This article is going to build a working demo using go-zero framework, which is a golang api framework using grpc and restapi. It supports codegeration. Prisma is also used to prototyping a database and seed the database. An SQL gen go tool is used to codegen protobuf files, which will be used as templates to generate rpc and api with full-stack frameworks and auto generating graphQL crud operations. The system is arch linux and the database is MariaDB.
+    <br />
+    <br />
+    <a href="https://github.com/yuzukicat/go-zero-demo"><strong>The source code for the working demo in github »</strong></a>
+    .
+    <a href="https://github.com/yuzukicat/parkinsons-disease/issues"><strong>The blog article  »</strong></a>
+  </p>
+</div>
+
 ## Install go | Arch Linux [1] [2]  
 
 > Remove any previous Go installation by deleting the /usr/local/go folder (if it exists), then extract the archive you just downloaded into /usr/local, creating a fresh Go tree in /usr/local/go:   
@@ -40,6 +67,7 @@ cd Workspace
 go install github.com/zeromicro/go-zero/tools/goctl@latest
 ```
 
+<!-- ABOUT THE PROJECT -->
 ## Install MariaDB | Arch Linux [3] [4]   
 
 > Install ```MariaDB``` [5] and additional packages (```mariadb-clients, mariadb-libs```) in Arch Linux.   
@@ -172,6 +200,7 @@ Edit `migrations/xxxx_init/migration.sql`.
 go run github.com/prisma/prisma-client-go generate.
 ```
 
+<!-- ABOUT THE PROJECT -->
 ## Use go-zero to init an API-Gateway (Hello World Demo) [9]   
 
 Install go-zero, protoc-gen-go.   
@@ -219,6 +248,7 @@ Access service.
 curl -i -X GET http://localhost:8888/from/you
 ```
 
+<!-- ABOUT THE PROJECT -->
 ## Generate Protobuf from mysql and use generated prodoc to write proto file for rpc [10]   
 
 Go install `Mikaelemmmm/sql2pb` [11].   
@@ -553,6 +583,7 @@ service service {
 }
 ```
 
+<!-- ABOUT THE PROJECT -->
 ## Generate Model from mysql, Generate Rpc using Prodoc   
 
 ```sh
@@ -570,6 +601,7 @@ go mod tidy
 cd service
 ```
 
+<!-- ABOUT THE PROJECT -->
 ## Business Coding (Coding rpc)   
 
 Add database configuration for rpc in yaml file.   
@@ -690,6 +722,7 @@ func (l *GetPostByIdLogic) GetPostById(in *post.GetPostByIdReq) (*post.GetPostBy
 }
 ```
 
+<!-- ABOUT THE PROJECT -->
 ## Generating APIs   
 
 Define APIs:   
@@ -825,11 +858,13 @@ func (l *PostLogic) Post(req *types.GetPostByIdReq) (resp *types.GetPostByIdResp
 +			Id:        onePost.Post.Id,(https://wiki.archlinux.org/title/MySQL)
 ```
 
+<!-- ABOUT THE PROJECT -->
 ## Known Issues
 
 - An mySQL record can not contain ```null``` value, if null, there will be an error that can not convert null to string, which means in prisma schema, the string? should be string.
 - In prisma schema, the Id should be the type Int, not string, which means that the advanced feature like cuid support is missing. Otherwise, in the generated model, the type of Id would be string (because go-zero introspacted the database and infered the type according to the database, but the protobuf uses `Mikaelemmmm/sql2pb` codegen)
 
+<!-- ABOUT THE PROJECT -->
 ## References   
 
 [1]: https://go.dev/doc/install   
