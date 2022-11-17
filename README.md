@@ -690,7 +690,7 @@ func (l *GetPostByIdLogic) GetPostById(in *post.GetPostByIdReq) (*post.GetPostBy
 }
 ```
 
-## Coding APIs   
+## Generating APIs   
 
 Define APIs:   
 
@@ -729,7 +729,7 @@ service post-api {
 Generate api services.   
 
 ```sh
-goctl api go --api ./pw
+goctl api go --api ./post/api/postApi.api -dir ./post/api --style=goZero
 ```
 
 Edit `config.go`.   
@@ -853,3 +853,17 @@ func (l *PostLogic) Post(req *types.GetPostByIdReq) (resp *types.GetPostByIdResp
 [10]: https://blog.csdn.net/wanglei19891210/article/details/124420212   
 
 [11]: https://github.com/Mikaelemmmm/sql2pb   
+
+```js
+[1]: https://go.dev/doc/install
+[2]: https://go.dev/doc/tutorial/workspaces
+[3]: https://wiki.archlinux.org/title/MySQL
+[4]: https://wiki.archlinux.org/title/MariaDB
+[5]: https://archlinux.org/packages/extra/x86_64/mariadb
+[6]: https://mariadb.com/kb/en/systemd
+[7]: https://www.prisma.io/docs/concepts/components/prisma-migrate/shadow-database
+[8]: https://go.dev/doc/tutorial/workspaces
+[9]: https://go-zero.dev
+[10]: https://blog.csdn.net/wanglei19891210/article/details/124420212
+[11]: https://github.com/Mikaelemmmm/sql2pb
+```
